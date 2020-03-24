@@ -15,10 +15,11 @@ class Runner():
     Class describing how an sprite in the virtual environment behaves, 
     moving to track, or evade, its opponent.
     """
-    def __init__(self, pos=[0,0], vel=[0,0], colour='gray'):
+    def __init__(self, pos=[0,0], vel=[0,0], radius=0.2, colour='gray'):
         self._pos = np.array(pos)
         self._vel = np.array(vel)
-        self._patch = pl.Circle(self._pos, 0.2, fc=colour)
+        self._radius = radius
+        self._patch = pl.Circle(self._pos, radius, fc=colour)
         
     def get_patch(self):
         """
@@ -38,8 +39,8 @@ class Chaser(Runner):
     Class to describe a chaser, a kind of runner that chases a given target
     by adjusting its velocity to track it.
     """
-    def __init__(self):
-        Runner.__init__(self, pos=[-1,0], colour='red')
+    def __init__(self, cpos, cvel):
+        Runner.__init__(self, pos=cpos, vel=cvel, colour='red')
         
     def seek(self, other):
         direction = other._pos - self._pos
@@ -50,12 +51,13 @@ class World():
     """
     Class describing the world in which the runners operate.
     """
-    def __init__(self, x=10, y=10, dt=0.02):
+    def __init__(self, x=10, y=10, dt=0.02, start=
+                 [[0,0], [0,0], [0,0], [0,0]]):
         self._lenx = x
         self._leny = y
         self._dt = dt
-        self._chaser = Chaser()
-        self._runner = Runner(pos=[1,0], vel=[0,1])
+        self._chaser = Chaser(cpos=start[0], cvel=start[1])
+        self._runner = Runner(pos=start[2], vel=start[3])
         
     def create(self):
         ax = pl.axes(xlim=(-self._lenx/2, self._lenx/2),
@@ -71,6 +73,14 @@ class World():
             ax.add_patch(self._runner.get_patch())
             ax.add_patch(self._chaser.get_patch())
             
+            separation = np.sqrt(
+                    (self._chaser._pos[0]-self._runner._pos[0])**2
+                    + (self._chaser._pos[0]-self._runner._pos[0])**2)
+            
             if(self._runner._pos[0] > 5 or self._runner._pos[1] > 5):
+                print("Out of bounds!")
+                break
+            elif(separation < self._chaser._radius + self._runner._radius):
+                print("Caught!")
                 break
             
