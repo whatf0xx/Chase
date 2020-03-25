@@ -13,5 +13,5 @@ world1 = r.World(start=
                  [[0, 0], #runner start
                  [1, 0], #runner starting velocity
                  [-1, 1], #chaser start
-                 [0, 0]]) #chaser starting velocity
+                 [-0.8, -0.6]]) #chaser starting velocity
 world1.create()

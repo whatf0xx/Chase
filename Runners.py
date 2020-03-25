@@ -47,6 +47,14 @@ class Chaser(Runner):
         absolute = np.sqrt(direction[0]**2 + direction[1]**2)
         self.setvel(direction/absolute)
         
+class Scaper(Runner):
+    """
+    Class for 'scapers', the particles that avoid the chasers.
+    They also have to avoid the walls.
+    """
+    def __init__(self, spos, svel):
+        Runner.__init__(self, )
+
 class World():
     """
     Class describing the world in which the runners operate.
@@ -77,7 +85,8 @@ class World():
                     (self._chaser._pos[0]-self._runner._pos[0])**2
                     + (self._chaser._pos[0]-self._runner._pos[0])**2)
             
-            if(self._runner._pos[0] > 5 or self._runner._pos[1] > 5):
+            if(abs(self._runner._pos[0]) > self._lenx/2 or 
+               abs(self._runner._pos[1]) > self._leny/2):
                 print("Out of bounds!")
                 break
             elif(separation < self._chaser._radius + self._runner._radius):
